@@ -4,6 +4,7 @@ Petit logiciel pour l’annonceur.
 
 Fait avec [Svelte](https://svelte.dev).
 
+![Preview](preview.gif)
 
 ## Participants
 
