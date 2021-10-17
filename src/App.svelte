@@ -7,6 +7,7 @@
   let tmp = {};
   let entered = [];
   let participants = [];
+  let inputElem;
 
   $: {
     current;
@@ -17,9 +18,9 @@
     participants = participantsJson;
   });
 
-  beforeUpdate(async () => {
-    await tick();
-  });
+  // beforeUpdate(async () => {
+  //   await tick();
+  // });
 
   // Functions
   function makeTmp() {
@@ -46,6 +47,8 @@
     ev.preventDefault();
 
     findParticipant();
+
+    inputElem ? inputElem.select() : '';
   }
 </script>
 
@@ -56,19 +59,38 @@
 </div>
 
 <form on:submit={submitForm}>
-  <input type="number" bind:value={current} on:keyup={() => makeTmp()} >
+  <input
+    bind:this={inputElem}
+    type="number"
+    bind:value={current}
+    on:keyup={() => makeTmp()}
+    autofocus
+    placeholder="# dossard"
+  >
 </form>
 
+{#if tmp.nom}
 <div class="tmp">
-  {#if tmp.nom}
   <span>{tmp.prenom}</span>
   <span>{tmp.nom}</span>
   <span>#{tmp.id}</span>
   <span class="equipe">{tmp.equipe}</span>
-  {/if}
 </div>
+{:else}
+{#if current > 0}
+<div class="notfound">
+  (#{current} introuvable)
+</div>
+{/if}
+{/if}
 
 <div id="list">
+  <div class="header row">
+    <span>#</span>
+    <span>Prénom</span>
+    <span>Nom</span>
+    <span>Équipe</span>
+  </div>
   {#each entered as enter}
   <div class="row">
     <span>{enter.id}</span>
@@ -101,7 +123,9 @@
   }
 
   form {
-
+    margin: 2rem auto;
+    width: 100%;
+    max-width: 40rem;
   }
 
   input {
@@ -110,17 +134,16 @@
     text-align: center;
 
     font-size: 3rem;
-    line-height: 1.35;
-    width: 6em;
+    padding: 1rem .75rem;
+    line-height: 1;
+    width: 100%;
     display: block;
     margin: .5rem 0 .5rem;
   }
 
   #list {
     margin-top: 1.5rem;
-    border-top: 2px solid currentColor;
     width: 100%;
-
   }
 
   .tmp {
@@ -130,6 +153,13 @@
     text-align: center;
   }
 
+  .notfound {
+    margin: 2rem 0;
+    line-height: 7vw;
+    font-size: 6vw;
+    opacity: .85;
+  }
+
   .row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -137,6 +167,19 @@
     justify-content: space-between;
     border-bottom: 1px solid currentColor;
     padding: .75rem 0;
+  }
+  .row.header {
+    border-top: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+  }
+  .row.header span {
+    font-size: .9325rem;
+  }
+  @media (min-width: 60rem) {
+
+    .row.header span {
+      font-size: .875rem;
+    }
   }
 
   .row span {
